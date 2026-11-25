@@ -105,8 +105,7 @@ A split-screen **Streamlit** dashboard showing:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<YOUR-USERNAME>/evidence-driven-it-incident-agent.git
-cd evidence-driven-it-incident-agent
+git clone https://github.com/harleenkaur13/IT-Incident-Diagnosis-Agent
 ```
 
 ### 2. Install dependencies
@@ -119,31 +118,11 @@ uv sync
 
 Copy `.env.example` to `.env` and add your Groq API key.
 
-macOS / Linux:
-```bash
-cp .env.example .env
-```
-
-Windows (PowerShell):
-```powershell
-Copy-Item .env.example .env
-```
-
-Then edit `.env`:
-```env
-GROQ_API_KEY=gsk_your_actual_groq_key_here
-```
-
-> Never commit `.env`. Make sure it is listed in `.gitignore`.
-
 ### 4. Launch the Streamlit demo UI
 
 ```bash
 uv run streamlit run app.py
 ```
-
-Open the local URL shown in your terminal (usually `http://localhost:8501`).
-
 ---
 
 ## Example Run
