@@ -49,12 +49,14 @@ Re-run diagnostics to verify
 ## What It Currently Does (Phase 1 Scope)
 
 ### Knowledge Retrieval (RAG)
+
 - Indexes curated VPN troubleshooting SOPs, authorization policies and historical tickets.
 - Embeddings: `BAAI/bge-small-en-v1.5`.
 - Vector store: local **FAISS** index.
 - Every retrieved chunk carries a source citation.
 
 ### Deterministic IT Simulator
+
 Stateful, reproducible fault scenarios:
 
 | Scenario | Description |
@@ -72,6 +74,7 @@ Tools:
 | Remediation (restricted) | `restart_vpn_service` | Requires human approval |
 
 ### LangGraph Agentic Orchestration
+
 - Retrieves relevant documentation and runs safe diagnostic checks.
 - Uses Groq (`openai/gpt-oss-120b`) with structured outputs to produce ranked hypotheses with confidence scores, supporting and conflicting evidence, and source citations.
 - **Human-in-the-loop (HITL) approval gate:** execution pauses before any restricted action, using LangGraph checkpointing (`MemorySaver`).
@@ -80,10 +83,13 @@ Tools:
   - If the action is rejected or recovery cannot be verified, the incident is escalated to Level-2 IT Support (`ESCALATED`).
 
 ### Audit Trail
+
 A complete JSON investigation log is saved for every run at `logs/<incident_id>.json`.
 
 ### Interactive Demo UI
+
 A split-screen **Streamlit** dashboard showing:
+
 - the live investigation timeline,
 - tool outputs,
 - cited SOPs,
@@ -105,7 +111,8 @@ A split-screen **Streamlit** dashboard showing:
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/harleenkaur13/IT-Incident-Diagnosis-Agent
+git clone https://github.com/harleenkaur13/IT-Incident-Diagnosis-Agent.git
+cd IT-Incident-Diagnosis-Agent
 ```
 
 ### 2. Install dependencies
@@ -116,13 +123,32 @@ uv sync
 
 ### 3. Configure environment variables
 
-Copy `.env.example` to `.env` and add your Groq API key.
+Copy `.env.example` to `.env`:
+
+```bash
+# macOS / Linux
+cp .env.example .env
+
+# Windows (PowerShell)
+Copy-Item .env.example .env
+```
+
+Then add your Groq API key to `.env`:
+
+```env
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+> Never commit `.env` to version control.
 
 ### 4. Launch the Streamlit demo UI
 
 ```bash
 uv run streamlit run app.py
 ```
+
+Open the local URL shown in your terminal (usually `http://localhost:8501`).
+
 ---
 
 ## Example Run
@@ -146,6 +172,8 @@ uv run streamlit run app.py
 - No baseline comparison or large-scale evaluation yet.
 - Results depend on the external LLM API (Groq) being reachable.
 
+---
+
 ## Planned Work (Phase 2)
 
 - More scenarios: account lockout, DNS misconfiguration, outdated VPN client, ambiguous cases.
@@ -166,10 +194,12 @@ uv run streamlit run app.py
 
 **Mentor:** Dr. Rajneesh Rani, Associate Professor, Dept. of Computer Science and Engineering, Dr. B R Ambedkar NIT Jalandhar
 
+---
+
 ## References
 
-- Lewis et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.* https://arxiv.org/abs/2005.11401
-- LangGraph Documentation: Persistence and Human-in-the-Loop. https://docs.langchain.com/oss/python/langgraph/persistence
-- NIST (2023). *Artificial Intelligence Risk Management Framework (AI RMF 1.0).* https://doi.org/10.6028/NIST.AI.100-1
-- Microsoft OpenRCA, Root-Cause Analysis Benchmark. https://microsoft.github.io/OpenRCA/
-- Microsoft Learn, Windows Networking Troubleshooting. https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/troubleshoot-tcp-ip-communication-guidance
+- Lewis et al. (2020). *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.* <https://arxiv.org/abs/2005.11401>
+- LangGraph Documentation: Persistence and Human-in-the-Loop. <https://docs.langchain.com/oss/python/langgraph/persistence>
+- NIST (2023). *Artificial Intelligence Risk Management Framework (AI RMF 1.0).* <https://doi.org/10.6028/NIST.AI.100-1>
+- Microsoft OpenRCA, Root-Cause Analysis Benchmark. <https://microsoft.github.io/OpenRCA/>
+- Microsoft Learn, Windows Networking Troubleshooting. <https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/troubleshoot-tcp-ip-communication-guidance>
