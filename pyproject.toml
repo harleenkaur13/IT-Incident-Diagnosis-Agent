@@ -16,6 +16,7 @@ dependencies = [
     "langchain-text-splitters>=1.2.0",
     "langgraph>=1.2.24",
     "pydantic>=2.14.4",
+    "pymupdf>=2.1",
     "python-dotenv>=1.2.4",
     "sentence-transformers>=6.3.0",
     "streamlit>=1.67.0",

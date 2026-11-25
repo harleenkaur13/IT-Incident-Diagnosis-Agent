@@ -26,8 +26,7 @@ class Hypothesis(BaseModel):
     confidence: float = Field(description="Confidence score between 0.0 and 1.0")
     supporting_evidence: List[str] = Field(description="Tool outputs or doc facts supporting this cause")
     conflicting_evidence: List[str] = Field(description="Facts that weaken or rule out this cause")
-    citations: List[str] = Field(description="Source filenames cited, e.g., vpn_troubleshooting_sop.md")
-
+    citations: List[str] = Field(description="Exact source filenames from the RETRIEVED KNOWLEDGE BASE section only")
 
 class DiagnosisReport(BaseModel):
     ranked_hypotheses: List[Hypothesis] = Field(description="Hypotheses ordered from most likely to least likely")
@@ -88,7 +87,7 @@ def run_diagnostics_node(state: AgentState) -> Dict[str, Any]:
 
 def rank_root_causes_node(state: AgentState) -> Dict[str, Any]:
     docs_text = "\n\n".join(
-        f"]\n{d['content']}" for d in state["retrieved_docs"]
+        f"[Source: {d['source']}]\n{d['content']}" for d in state["retrieved_docs"]
     )
 
     prompt = f"""You are an evidence-driven IT Incident Diagnosis AI.
@@ -105,13 +104,14 @@ DIAGNOSTIC TOOL OUTPUTS:
 
 Instructions:
 1. Rank at least 2 possible root causes from most likely to least likely.
-2. Cite the exact source filenames (e.g., vpn_troubleshooting_sop.md, authorization_policy.md).
+2. Cite ONLY the exact source labels shown in the RETRIEVED KNOWLEDGE BASE above. Never invent filenames.
 3. Follow the authorization policy strictly: if the recommended action is RESTRICTED, set requires_approval=True.
 """
 
-    structured_llm = llm.with_structured_output(DiagnosisReport)
+    structured_llm = llm.with_structured_output(
+        DiagnosisReport, method="json_schema"
+    ).with_retry(stop_after_attempt=3)
     report: DiagnosisReport = structured_llm.invoke(prompt)
-
     top_cause = report.ranked_hypotheses[0].cause if report.ranked_hypotheses else "Unknown"
     logs = log_step(
         state["investigation_log"],
